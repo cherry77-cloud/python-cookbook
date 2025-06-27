@@ -1,6 +1,7 @@
-from collections import deque
+from collections import deque, OrderedDict
 from typing import Iterable, Generator, List, Tuple
 import heapq
+import json
 
 # https://docs.python.org/3/library/collections.abc.html
 # https://docs.python.org/3/library/collections.html
@@ -177,3 +178,21 @@ set_map['a'].add(2)
 set_map['a'].add(2)  # 重复被忽略
 set_map['b'].add(4)
 # set_map == {'a': {1, 2}, 'b': {4}}
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.7 字典排序 (OrderedDict) ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────────────
+⭐ 场景     : 构建将来需要保持键插入顺序的映射（迭代/序列化时稳定顺序）
+⭐ 数据结构 :  collections.OrderedDict —— 基于双向链表维护插入顺序。
+⭐ 复杂度   : 与普通 dict 相当，内存开销略高（额外链表指针）
+────────────────────────────────────────────────────────────────────────────────────────────
+"""
+d = OrderedDict()        # 插入新键时置于末尾；对已有键赋值不改变顺序
+d['foo'] = 1
+d['bar'] = 2
+d['spam'] = 3
+d['grok'] = 4
+for key in d:
+    print(key, d[key])   # foo 1  bar 2  spam 3  grok 4
+json.dumps(d)            # {"foo": 1, "bar": 2, "spam": 3, "grok": 4}
