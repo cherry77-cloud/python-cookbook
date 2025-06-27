@@ -60,6 +60,16 @@ uname, *_, homedir, shell = line.split(':')       # uname='nobody', homedir='/va
 ⭐ 问题     : 迭代或其他操作中，仅需保留最近 N 条记录
 ⭐ 解决方案 : 使用 collections.deque(maxlen=N) 自动丢弃最老元素
 ⭐ 特点     : append 操作 O(1)，满时自动剔除队首；appendleft, pop, popleft 同样高效
+──────────────────────────────────────────────
+⭐ 容器 (Container)
+   • 定义 : 实现 __contains__(self, item) 或支持 in 运算的对象，可存放其他对象的盒子
+   • 典型 : list, tuple, set, dict, str, deque, 自定义类实现 __iter__/__len__/__contains__ 亦可视为容器
+   • 特性 : 可配合 len(), in, 迭代等操作; 多数容器同样是 Iterable / Collection
+⭐ 生成器 (Generator)
+   • 定义 : 含有 yield 的函数调用结果，返回一个延迟计算的迭代器；或 (expr for x in iterable) 推导式产生
+   • 协议 : 同时实现 __iter__() 和 __next__()，每次 next() 产出一个值，直至抛 StopIteration
+   • 优势 : 惰性、节省内存，可无限序列或大数据流; 可配合 send() /throw() /close() 做协程
+──────────────────────────────────────────────
 """
 def search(lines: Iterable[str], pattern: str, history: int = 3) -> Generator[Tuple[str, List[str]], None, None]:
     prev: deque[str] = deque(maxlen=history)
