@@ -1,5 +1,5 @@
 """
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.1 将序列分解为单独变量 (Sequence Unpacking) ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.1 将序列分解为单独变量 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ──────────────────────────────────────────────
 ⭐ 适用对象 : 所有可迭代对象 (元组 / 列表 / 字符串 / 文件对象 / 迭代器 / 生成器 …)
 ⭐ 数量匹配 : 变量数量必须与序列元素数量一致，否则抛 ValueError
@@ -21,16 +21,33 @@
 
 # 基本解包
 x, y = (4, 5)
-
 # 列表 + 嵌套元组
 data = ['ACME', 50, 91.1, (2012, 12, 21)]
 name, shares, price, (year, mon, day) = data  # 嵌套解包
-
 # 使用占位符 _ 忽略不需要的值
 _, shares, price, _ = data
-
 # ❌ 解包数量不匹配示例 (抛 ValueError)
 try:
     a, b, c = (1, 2)
 except ValueError as err:
     print("ValueError:", err)
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.2 解压可迭代对象赋值给多个变量 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+⭐ 适用场景 : 当可迭代对象元素多于变量时，用 *var 接收剩余元素
+⭐ 收集类型 : *var 永远是 list（即便为空）
+⭐ 位置灵活 : *var 可在开头、中间、结尾（*head, last / first, *mid, last / first, *tail）
+⭐ 占位符   : 若仅想丢弃余下元素，用 *_ 或其他占位名
+"""
+
+def drop_first_last(grades):                     # grades = [10, 9, 8, 7, 6]
+    first, *middle, last = grades
+    return sum(middle) / len(middle)             # → 8.0
+
+record = ('Dave', 'dave@example.com', '773-555-1212', '847-555-1212')
+name, email, *phones = record  # name='Dave', email='dave@example.com', phones=['773-555-1212','847-555-1212']
+
+*prev, current = [10, 8, 7, 1, 9, 5, 10, 3]      # prev=[10,8,7,1,9,5,10], current=3
+line = 'nobody:*:-2:-2:Unprivileged User:/var/empty:/usr/bin/false'
+uname, *_, homedir, shell = line.split(':')       # uname='nobody', homedir='/var/empty', shell='/usr/bin/false'
