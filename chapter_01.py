@@ -47,7 +47,5 @@ def drop_first_last(grades):                     # grades = [10, 9, 8, 7, 6]
 
 record = ('Dave', 'dave@example.com', '773-555-1212', '847-555-1212')
 name, email, *phones = record  # name='Dave', email='dave@example.com', phones=['773-555-1212','847-555-1212']
-
-*prev, current = [10, 8, 7, 1, 9, 5, 10, 3]      # prev=[10,8,7,1,9,5,10], current=3
 line = 'nobody:*:-2:-2:Unprivileged User:/var/empty:/usr/bin/false'
 uname, *_, homedir, shell = line.split(':')       # uname='nobody', homedir='/var/empty', shell='/usr/bin/false'
