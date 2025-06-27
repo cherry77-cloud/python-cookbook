@@ -129,3 +129,28 @@ portfolio = [
 ]
 cheap      = heapq.nsmallest(3, portfolio, key=lambda s: s['price'])
 expensive  = heapq.nlargest(3,  portfolio, key=lambda s: s['price'])
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.5 实现一个优先级队列 (Priority Queue) ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────────────
+⭐ 场景     : 需要按优先级（权重）依次取元素，最高优先级先出队
+⭐ 数据结构 : heapq + 元组 (-priority, index, item) 形成稳定的最大堆
+⭐ 复杂度   : push / pop 均为 O(log n)，适合海量数据
+⭐ index   : 避免同优先级元素不可比较，并确保 FIFO 顺序
+────────────────────────────────────────────────────────────────────────────────────────────
+"""
+class PriorityQueue:
+    """最大堆优先级队列，支持同优先级 FIFO。"""
+    def __init__(self):
+        self._queue: list[tuple[int, int, object]] = []  # (-priority, index, item)
+        self._index: int = 0
+
+    def push(self, item, priority: int) -> None:
+        # -priority ↔ 最大堆；index 保证同优先级按插入顺序 (稳定)
+        heapq.heappush(self._queue, (-priority, self._index, item))
+        self._index += 1
+
+    def pop(self):
+        """弹出优先级最高且最早插入的元素"""
+        return heapq.heappop(self._queue)[-1]
