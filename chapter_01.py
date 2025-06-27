@@ -1,3 +1,6 @@
+from collections import deque
+from typing import Iterable, Generator, List, Tuple
+
 """
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.1 将序列分解为单独变量 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ──────────────────────────────────────────────
@@ -49,3 +52,23 @@ record = ('Dave', 'dave@example.com', '773-555-1212', '847-555-1212')
 name, email, *phones = record  # name='Dave', email='dave@example.com', phones=['773-555-1212','847-555-1212']
 line = 'nobody:*:-2:-2:Unprivileged User:/var/empty:/usr/bin/false'
 uname, *_, homedir, shell = line.split(':')       # uname='nobody', homedir='/var/empty', shell='/usr/bin/false'
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.3 保留最后 N 个元素 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+──────────────────────────────────────────────
+⭐ 问题     : 迭代或其他操作中，仅需保留最近 N 条记录
+⭐ 解决方案 : 使用 collections.deque(maxlen=N) 自动丢弃最老元素
+⭐ 特点     : append 操作 O(1)，满时自动剔除队首；appendleft, pop, popleft 同样高效
+"""
+def search(lines: Iterable[str], pattern: str, history: int = 3) -> Generator[Tuple[str, List[str]], None, None]:
+    prev: deque[str] = deque(maxlen=history)
+    for line in lines:
+        if pattern in line:
+            yield line, list(prev)
+        prev.append(line)
+
+logs = ['a','python error','b','c','python ok','d']
+for match, prev in search(logs, 'python', history=2):
+    print(match, prev)                          # → 'python error', ['a']
+                                                # → 'python ok', ['b', 'c']
