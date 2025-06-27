@@ -1,4 +1,4 @@
-from collections import deque, OrderedDict
+from collections import deque, OrderedDict, Counter
 from typing import Iterable, Generator, List, Tuple
 import heapq
 import json
@@ -274,3 +274,67 @@ def dedupe(items, key=None):
 a = [{'x':1, 'y':2}, {'x':1, 'y':3}, {'x':1, 'y':2}, {'x':2, 'y':4}]
 list(dedupe(a, key=lambda d: (d['x'],d['y'])))
 list(dedupe(a, key=lambda d: d['x']))
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.11 命名切片 (Named Slices) ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 代码中存在大量硬编码切片下标，降低可读性
+⭐ 核心技术 : 使用 slice() 创建命名切片对象
+  - 提高代码可读性和可维护性
+  - 切片对象可重用
+  - 支持所有切片操作（读取、赋值、删除）
+⭐ 高级特性 : indices(size) 方法自动调整边界，避免 IndexError
+────────────────────────────────────────────────────────────────────────────────────
+"""
+record = '....................100 .......513.25 ..........'
+SHARES = slice(20, 23)
+PRICE = slice(31, 37)
+cost = int(record[SHARES]) * float(record[PRICE])
+
+a = slice(2, 4)
+items[a] = [10,11]  # 等价于 items[2:4] = [10,11]
+
+# indices() 避免越界
+a = slice(5, 50, 2)
+a.indices(10)  # → (5, 10, 2)
+
+
+"""
+░░░░░░░░░░░░░░ 1.12 序列中出现次数最多的元素 (Most Common Elements) ░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 找出序列中出现频率最高的元素
+⭐ 核心技术 : collections.Counter 类
+  - Counter(iterable) 创建计数器
+  - most_common(n) 返回出现频率最高的 n 个元素
+  - update() 批量更新计数
+⭐ 高级特性 : 支持数学运算 +  -  &  |
+⭐ 比较运算符：
+  == / != : 判断两个计数器在「正计数元素」上的计数是否完全一致。等价于 dict(c1) == dict(c2)（自动忽略计数≤0的元素）
+  < / <=  : 判断真子集/子集关系  all(c1[x] <= c2[x] for x in c1∪c2) ;  < 还需至少一个元素严格小于
+  > / >=  : 判断真超集/超集关系  all(c1[x] >= c2[x] for x in c1∪c2);  还需至少一个元素严格大于
+────────────────────────────────────────────────────────────────────────────────────
+"""
+words = [
+    'look', 'into', 'my', 'eyes', 'look', 'into', 'my', 'eyes',
+    'the', 'eyes', 'the', 'eyes', 'the', 'eyes', 'not', 'around', 'the',
+    'eyes', "don't", 'look', 'around', 'the', 'eyes', 'look', 'into',
+    'my', 'eyes', "you're", 'under'
+]
+word_counts = Counter(words)
+top_three = word_counts.most_common(3)  # → [('eyes', 8), ('the', 5), ('look', 4)]
+
+# 访问计数
+word_counts['eyes']  # → 8
+
+# 更新计数
+word_counts['new'] += 1
+word_counts.update(['more', 'words'])
+
+# 数学运算
+a = Counter(words1)
+b = Counter(words2)
+c = a + b  # 合并计数
+d = a - b  # 差集计数
+e = a & b  # 交集（取最小）
+f = a | b  # 并集（取最大）
