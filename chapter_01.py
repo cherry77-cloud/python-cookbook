@@ -237,3 +237,40 @@ common_keys = a.keys() & b.keys()            # → {'x', 'y'}
 unique_in_a = a.keys() - b.keys()            # → {'z'}
 common_items = a.items() & b.items()         # → {('y', 2)}
 c = {key: a[key] for key in a.keys() - {'z', 'w'}}  # → {'x': 1, 'y': 2}
+
+
+"""
+░░░░░░░░░░░░░░ 1.10 删除序列相同元素并保持顺序 (Dedupe with Order) ░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 去除序列中的重复元素，同时保持原始顺序
+⭐ 核心技术 : 使用 set 记录已见元素 + 生成器惰性返回
+  - set 提供 O(1) 的查重性能
+  - 生成器避免创建新列表，节省内存
+  - key 函数处理不可哈希类型（如 dict）
+⭐ 对比     : set(items) 会去重但破坏顺序，本方案保持顺序
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 什么是可哈希
+  - 可哈希对象必须有 __hash__() 方法，返回整数哈希值
+  - 生命周期内哈希值不变，且相等的对象哈希值必须相同
+  - 可作为 dict 的键或 set 的元素
+⭐ 为什么可变类型不可哈希
+  - 如果对象内容改变，哈希值也应该改变
+  - 但这会破坏 dict/set 的内部结构（基于哈希表）
+  - 所以 Python 禁止可变类型作为 dict 键或 set 元素
+⭐ 可哈希 vs 不可哈希：
+  - hashable: int, float, str, tuple, frozenset, bool, None
+  - unhashable: list, dict, set, bytearray（所有可变类型）
+  - 规则: 不可变类型通常可哈希，可变类型不可哈希
+────────────────────────────────────────────────────────────────────────────────────
+"""
+def dedupe(items, key=None):
+   seen = set()
+   for item in items:
+       val = item if key is None else key(item)
+       if val not in seen:
+           yield item
+           seen.add(val)
+
+a = [{'x':1, 'y':2}, {'x':1, 'y':3}, {'x':1, 'y':2}, {'x':2, 'y':4}]
+list(dedupe(a, key=lambda d: (d['x'],d['y'])))
+list(dedupe(a, key=lambda d: d['x']))
