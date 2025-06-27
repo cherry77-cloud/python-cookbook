@@ -154,3 +154,26 @@ class PriorityQueue:
     def pop(self):
         """弹出优先级最高且最早插入的元素"""
         return heapq.heappop(self._queue)[-1]
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.6 字典中的键映射多个值 (Multi‑Dict) ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+──────────────────────────────────────────────
+⭐ 场景     : 需要让同一个键关联多个值（如日志归类、倒排索引）
+⭐ 推荐做法 : collections.defaultdict( list / set ) —— 自动初始化容器
+⭐ 何时用哪种容器
+   • list  → 保留插入顺序，允许重复
+   • set   → 去重且不关心顺序
+"""
+list_map: defaultdict[str, list[int]] = defaultdict(list)
+list_map['a'].append(1)
+list_map['a'].append(2)
+list_map['b'].append(4)
+# list_map == {'a': [1, 2], 'b': [4]}
+
+set_map: defaultdict[str, set[int]] = defaultdict(set)
+set_map['a'].add(1)
+set_map['a'].add(2)
+set_map['a'].add(2)  # 重复被忽略
+set_map['b'].add(4)
+# set_map == {'a': {1, 2}, 'b': {4}}
