@@ -196,3 +196,23 @@ d['grok'] = 4
 for key in d:
     print(key, d[key])   # foo 1  bar 2  spam 3  grok 4
 json.dumps(d)            # {"foo": 1, "bar": 2, "spam": 3, "grok": 4}
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.8 字典的运算 (Dict Computations) ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 在字典中进行最小/最大值查找与排序，同时获取对应的键和值
+⭐ 核心技术 : 利用 zip() 交换 (value, key) 或使用 min()/max() 的 key 参数
+⭐ 核心技巧 : zip(dict.values(), dict.keys()) 反转为 (值, 键) 元组
+⭐ 原理     : 元组比较时先比值再比键；zip() 返回迭代器只能用一次
+────────────────────────────────────────────────────────────────────────────────────────────
+"""
+prices = {'ACME': 45.23, 'AAPL': 612.78, 'IBM': 205.55, 'HPQ': 37.20, 'FB': 10.75}
+min_val_key = min(zip(prices.values(), prices.keys()))  # → (10.75, 'FB')
+max_val_key = max(zip(prices.values(), prices.keys()))  # → (612.78, 'AAPL')
+# 排序所有项
+sorted_by_price = sorted(zip(prices.values(), prices.keys()))  # → [(10.75,'FB'), (37.2,'HPQ'), ...]
+# 使用 key 参数直接在键上查找
+min_key = min(prices, key=lambda k: prices[k])          # → 'FB'
+max_key = max(prices, key=lambda k: prices[k])          # → 'AAPL'
+min_value = prices[min_key]                             # → 10.75
