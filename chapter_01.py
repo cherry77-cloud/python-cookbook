@@ -1,5 +1,6 @@
 from collections import deque, OrderedDict, Counter
 from typing import Iterable, Generator, List, Tuple
+from operator import itemgetter
 import heapq
 import json
 
@@ -338,3 +339,34 @@ c = a + b  # 合并计数
 d = a - b  # 差集计数
 e = a & b  # 交集（取最小）
 f = a | b  # 并集（取最大）
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.13 通过某个关键字排序字典列表 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 根据字典的某个或某几个字段排序字典列表
+⭐ 核心技术 : operator.itemgetter()
+ - itemgetter('key') 创建获取单个键的函数
+ - itemgetter('key1', 'key2') 创建获取多个键的函数
+ - 比 lambda 表达式更快
+⭐ 适用场景 : sorted(), min(), max() 等需要 key 函数的场合
+────────────────────────────────────────────────────────────────────────────────────
+"""
+rows = [
+   {'fname': 'Brian', 'lname': 'Jones', 'uid': 1003},
+   {'fname': 'David', 'lname': 'Beazley', 'uid': 1002},
+   {'fname': 'John', 'lname': 'Cleese', 'uid': 1001},
+   {'fname': 'Big', 'lname': 'Jones', 'uid': 1004}
+]
+
+rows_by_fname = sorted(rows, key=itemgetter('fname'))
+rows_by_uid = sorted(rows, key=itemgetter('uid'))
+rows_by_lfname = sorted(rows, key=itemgetter('lname', 'fname'))
+
+# 用于 min/max
+min_uid = min(rows, key=itemgetter('uid'))  # uid 最小的记录
+max_uid = max(rows, key=itemgetter('uid'))  # uid 最大的记录
+
+# lambda 替代方案（稍慢）
+rows_by_fname_lambda = sorted(rows, key=lambda r: r['fname'])
+rows_by_lfname_lambda = sorted(rows, key=lambda r: (r['lname'], r['fname']))
