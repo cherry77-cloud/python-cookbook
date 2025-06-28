@@ -370,3 +370,34 @@ max_uid = max(rows, key=itemgetter('uid'))  # uid 最大的记录
 # lambda 替代方案（稍慢）
 rows_by_fname_lambda = sorted(rows, key=lambda r: r['fname'])
 rows_by_lfname_lambda = sorted(rows, key=lambda r: (r['lname'], r['fname']))
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.14 排序不支持原生比较的对象 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 排序没有实现比较方法的自定义对象
+⭐ 核心技术 : operator.attrgetter()
+ - attrgetter('attr') 创建获取单个属性的函数
+ - attrgetter('attr1', 'attr2') 创建获取多个属性的函数
+ - 比 lambda 表达式更快
+⭐ 适用场景 : sorted(), min(), max() 等需要 key 函数的场合
+────────────────────────────────────────────────────────────────────────────────────
+"""
+from operator import attrgetter
+
+class User:
+   def __init__(self, user_id, first_name='', last_name=''):
+       self.user_id = user_id
+       self.first_name = first_name
+       self.last_name = last_name
+   
+   def __repr__(self):
+       return f'User({self.user_id})'
+
+users = [User(23), User(3), User(99)]
+sorted_by_name = sorted(users, key=attrgetter('last_name', 'first_name'))
+
+# 用于 min/max
+min_user = min(users, key=attrgetter('user_id'))  # user_id 最小的对象
+max_user = max(users, key=attrgetter('user_id'))  # user_id 最大的对象
+sorted_by_name_lambda = sorted(users, key=lambda u: (u.last_name, u.first_name))
