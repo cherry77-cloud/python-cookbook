@@ -1,10 +1,3 @@
-from collections import deque, OrderedDict, Counter, defaultdict
-from typing import Iterable, Generator, List, Tuple
-from operator import itemgetter, attrgetter
-from itertools import groupby
-import heapq
-import json
-
 # https://docs.python.org/3/library/collections.abc.html
 # https://docs.python.org/3/library/collections.html
 # https://docs.python.org/3/library/heapq.html
@@ -425,3 +418,34 @@ rows = [
 ]
 rows.sort(key=itemgetter('date'))
 for date, items in groupby(rows, key=itemgetter('date')):
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.16 过滤序列元素 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 根据条件从序列中提取元素
+⭐ 核心技术 : 
+ - 列表推导：[x for x in seq if condition]
+ - 生成器表达式：(x for x in seq if condition) - 省内存
+ - filter(func, seq) - 复杂条件过滤
+ - itertools.compress(data, selectors) - 根据布尔序列过滤
+⭐ 高级技巧 : 条件表达式替换不符合条件的值
+────────────────────────────────────────────────────────────────────────────────────
+"""
+# filter() - 复杂条件
+values = ['1', '2', '-3', '-', '4', 'N/A', '5']
+def is_int(val):
+   try:
+       int(val)
+       return True
+   except ValueError:
+       return False
+
+ivals = list(filter(is_int, values))  # ['1', '2', '-3', '4', '5']
+
+# compress() - 根据另一个序列过滤
+from itertools import compress
+addresses = ['5412 N CLARK', '5148 N CLARK', '5800 E 58TH', '2122 N CLARK']
+counts = [0, 3, 10, 4]
+more5 = [n > 5 for n in counts]  # [False, False, True, False]
+result = list(compress(addresses, more5))  # ['5800 E 58TH']
