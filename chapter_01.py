@@ -1,13 +1,14 @@
 from collections import deque, OrderedDict, Counter
 from typing import Iterable, Generator, List, Tuple
-from operator import itemgetter
+from operator import itemgetter, attrgetter
+from itertools import groupby
 import heapq
 import json
 
 # https://docs.python.org/3/library/collections.abc.html
 # https://docs.python.org/3/library/collections.html
 # https://docs.python.org/3/library/heapq.html
-
+# https://grantjenks.com/docs/sortedcontainers/
 
 """
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.1 将序列分解为单独变量 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -383,8 +384,6 @@ rows_by_lfname_lambda = sorted(rows, key=lambda r: (r['lname'], r['fname']))
 ⭐ 适用场景 : sorted(), min(), max() 等需要 key 函数的场合
 ────────────────────────────────────────────────────────────────────────────────────
 """
-from operator import attrgetter
-
 class User:
    def __init__(self, user_id, first_name='', last_name=''):
        self.user_id = user_id
@@ -401,3 +400,28 @@ sorted_by_name = sorted(users, key=attrgetter('last_name', 'first_name'))
 min_user = min(users, key=attrgetter('user_id'))  # user_id 最小的对象
 max_user = max(users, key=attrgetter('user_id'))  # user_id 最大的对象
 sorted_by_name_lambda = sorted(users, key=lambda u: (u.last_name, u.first_name))
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.15 通过某个字段将记录分组 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 根据某个字段对字典或对象序列进行分组迭代
+⭐ 核心技术 : itertools.groupby()
+ - 必须先排序: groupby只检查连续相同的元素
+ - 返回 (key, group_iterator) 元组
+ - group_iterator 是一次性迭代器
+⭐ 替代方案 : defaultdict(list) 构建多值字典（无需排序）
+────────────────────────────────────────────────────────────────────────────────────
+"""
+rows = [
+   {'address': '5412 N CLARK', 'date': '07/01/2012'},
+   {'address': '5148 N CLARK', 'date': '07/04/2012'},
+   {'address': '5800 E 58TH', 'date': '07/02/2012'},
+   {'address': '2122 N CLARK', 'date': '07/03/2012'},
+   {'address': '5645 N RAVENSWOOD', 'date': '07/02/2012'},
+   {'address': '1060 W ADDISON', 'date': '07/02/2012'},
+   {'address': '4801 N BROADWAY', 'date': '07/01/2012'},
+   {'address': '1039 W GRANVILLE', 'date': '07/04/2012'},
+]
+rows.sort(key=itemgetter('date'))
+for date, items in groupby(rows, key=itemgetter('date')):
