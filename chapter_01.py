@@ -473,3 +473,31 @@ p2 = {k: v for k, v in prices.items() if k in tech_names}
 p3 = {k: prices[k] for k in prices.keys() & tech_names}
 # 4. 多条件过滤
 p4 = {k: v for k, v in prices.items() if v > 50 and k.startswith('A')}
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.18 映射名称到序列元素 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 通过名称而非下标访问序列元素，提高代码可读性
+⭐ 核心技术 : 
+ - namedtuple('类名', ['字段1', '字段2'])：创建具名元组类
+ - 实例._replace(**kwargs)：创建修改后的新实例（不可变）
+ - 兼容元组：支持索引、解包、len()等操作
+⭐ 优势     : 比字典省内存，比元组可读性高，适合只读数据结构
+────────────────────────────────────────────────────────────────────────────────────
+"""
+Stock = namedtuple('Stock', ['name', 'shares', 'price'])
+s = Stock('ACME', 100, 123.45)
+# 更新字段（返回新实例）
+s = s._replace(shares=75)
+
+# 缺失字段处理 - 原型模式
+Stock = namedtuple('Stock', ['name', 'shares', 'price', 'date', 'time'])
+# Create a prototype instance
+stock_prototype = Stock('', 0, 0.0, None, None)
+# Function to convert a dictionary to a Stock
+def dict_to_stock(s):
+    return stock_prototype._replace(**s)
+   
+a = {'name': 'ACME', 'shares': 100, 'price': 123.45}
+dict_to_stock(a)  # Stock(name='ACME', shares=100, price=123.45, date=None, time=None)
