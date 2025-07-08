@@ -449,3 +449,27 @@ addresses = ['5412 N CLARK', '5148 N CLARK', '5800 E 58TH', '2122 N CLARK']
 counts = [0, 3, 10, 4]
 more5 = [n > 5 for n in counts]  # [False, False, True, False]
 result = list(compress(addresses, more5))  # ['5800 E 58TH']
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.17 从字典中提取子集 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 根据条件从字典中提取部分键值对，构造新字典
+⭐ 核心技术 : 
+- 字典推导：{k:v for k,v in dict.items() if condition}
+- 键集合操作：dict.keys() & set 获取交集
+- dict()构造函数：dict((k,v) for k,v in items if condition)
+⭐ 性能对比 : 字典推导 > dict()函数
+────────────────────────────────────────────────────────────────────────────────────
+"""
+prices = {'ACME': 45.23, 'AAPL': 612.78, 'IBM': 205.55, 'HPQ': 37.20, 'FB': 10.75}
+
+# 1. 按值过滤 - 价格 > 200
+p1 = {k: v for k, v in prices.items() if v > 200}  
+# 2. 按键过滤 - 在指定集合中
+tech_names = {'AAPL', 'IBM', 'HPQ', 'MSFT'}
+p2 = {k: v for k, v in prices.items() if k in tech_names}
+# 3. 键集合操作方式（更优雅）
+p3 = {k: prices[k] for k in prices.keys() & tech_names}
+# 4. 多条件过滤
+p4 = {k: v for k, v in prices.items() if v > 50 and k.startswith('A')}
