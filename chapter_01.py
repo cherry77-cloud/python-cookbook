@@ -528,3 +528,38 @@ portfolio = [
 ]
 min_shares = min(s['shares'] for s in portfolio)
 min_item = min(portfolio, key=lambda s: s['shares'])  
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.20 合并多个字典或映射 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 逻辑上合并多个字典，执行查找等操作
+⭐ 核心技术 : 
+- ChainMap(dict1, dict2, ...)：创建字典链视图
+- 查找顺序：从左到右，返回第一个找到的值
+- 修改操作：只影响第一个字典
+- new_child()/parents：创建/移除作用域层级
+⭐ 优势     : 不创建新字典，原字典修改实时反映
+────────────────────────────────────────────────────────────────────────────────────
+"""
+a = {'x': 1, 'z': 3}
+b = {'y': 2, 'z': 4}
+c = ChainMap(a, b)
+c['z']  # 3 (from a, not b)
+
+values = ChainMap()
+values['x'] = 1
+values = values.new_child()  # 新作用域
+values['x'] = 2
+values = values.new_child()  # 再新作用域
+values['x'] = 3
+# ChainMap({'x': 3}, {'x': 2}, {'x': 1})
+values = values.parents  # 退出作用域
+# values['x'] = 2
+
+# 4. 对比update() - ChainMap是视图，不是拷贝
+# update(): 创建数据的副本，之后相互独立
+# ChainMap: 创建视图/引用，始终反映原字典的最新状态
+merged = dict(b)
+merged.update(a)
+a['x'] = 42 # merged['x'] 仍是 1
