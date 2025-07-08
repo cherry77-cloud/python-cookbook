@@ -501,3 +501,30 @@ def dict_to_stock(s):
    
 a = {'name': 'ACME', 'shares': 100, 'price': 123.45}
 dict_to_stock(a)  # Stock(name='ACME', shares=100, price=123.45, date=None, time=None)
+
+
+"""
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 1.19 转换并同时计算数据 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+────────────────────────────────────────────────────────────────────────────────────
+⭐ 问题     : 在聚集函数中同时进行数据转换或过滤
+⭐ 核心技术 : 
+- 生成器表达式作参数
+- 避免创建临时列表：生成器迭代处理，节省内存
+- 配合any()/all()/min()/max()等聚集函数使用
+⭐ 性能优势 : 不创建中间列表，适合大数据集
+────────────────────────────────────────────────────────────────────────────────────
+"""
+# 过滤并判断 - 是否存在.py文件
+files = os.listdir('dirname')
+if any(name.endswith('.py') for name in files):
+   print('There be python!')
+
+# 提取并聚集 - 最小股份数
+portfolio = [
+   {'name':'GOOG', 'shares': 50},
+   {'name':'YHOO', 'shares': 75},
+   {'name':'AOL', 'shares': 20},
+   {'name':'SCOX', 'shares': 65}
+]
+min_shares = min(s['shares'] for s in portfolio)
+min_item = min(portfolio, key=lambda s: s['shares'])  
